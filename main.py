@@ -116,21 +116,6 @@ def new_window_for_changes():
 
     def close():
         newchanges.destroy()
-    
-    def add_to_the_database():
-        date = input_data.get()
-        holiday = Entering_a_holiday.get()
-        result = compare(holiday)
-        if result is True:
-            add(date, holiday)
-        else:
-            messagebox.showerror("Ошибка", "Такое название праздника уже существует!")
-        close()
-        listbox.delete(0, 'end')
-        list = Selection()
-        for i, j in enumerate(list):
-            listbox.insert(i, j)
-        #Добавляет в базу данных
 
     def make_changes():
         try:
@@ -140,8 +125,30 @@ def new_window_for_changes():
         except IndexError:
             return
         return selected
-
     
+    result = make_changes()
+    date, name = result
+
+    def add_to_the_database():
+        date = input_data.get()
+        holiday = Entering_a_holiday.get()
+        result = compare(holiday)
+        if result is True:
+            add(date, holiday)
+        else:
+            messagebox.showerror("Ошибка", "Такое название праздника уже существует!")
+        close()
+        
+        listbox.delete(date, name)
+        delete_selected(date, name)
+
+        listbox.delete(0, 'end')
+        list = Selection()
+        for i, j in enumerate(list):
+            listbox.insert(i, j)
+        #Добавляет в базу данных
+
+
     
     changes = Button(newchanges, text="Изменить", command=add_to_the_database)
     changes.pack(side=TOP)
@@ -163,7 +170,7 @@ def new_window_for_changes():
     input_data = Entry(newchanges)
     input_data.place(x=5, y=30)
     input_data.place(width=190, height=20)
-    input_data.insert(make_changes())
+    input_data.insert(0, date)
     #Ввод даты
 
     holiday = Label(newchanges, text="Праздник:")
@@ -173,7 +180,7 @@ def new_window_for_changes():
     Entering_a_holiday = Entry(newchanges)
     Entering_a_holiday.place(x=5, y=80)
     Entering_a_holiday.place(width=190, height=20)
-    Entering_a_holiday.insert(make_changes())
+    Entering_a_holiday.insert(0, name)
     #Ввод праздника
     
 
