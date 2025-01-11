@@ -1,5 +1,6 @@
 from os import system
 from tkinter import *
+from tkinter import messagebox
 from tkinter.ttk import *
 
 import sqlite3
@@ -61,7 +62,11 @@ def openNewWindow():
     def add_to_the_database():
         date = input_data.get()
         holiday = Entering_a_holiday.get()
-        add(date, holiday)
+        result = compare(holiday)
+        if result is True:
+            add(date, holiday)
+        else:
+            messagebox.showerror("Ошибка", "Такое название праздника уже существует!")
         To_close()
         listbox.delete(0, 'end')
         list = Selection()

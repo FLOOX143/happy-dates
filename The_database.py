@@ -5,8 +5,7 @@ data = sqlite3.connect('database.db')
 c = data.cursor()
 c.execute("""CREATE TABLE IF NOT EXISTS holiday (
 date text NOT NULL, 
-name text NOT NULL,
-id INTEGER PRIMARY KEY
+name text NOT NULL
 )""")
 
 def add(Date, Name):
@@ -25,7 +24,16 @@ def delete():
     c.execute("DELETE FROM holiday")
     data.commit()
 
+def compare(item):
+    c.execute('SELECT name FROM holiday WHERE name=?', (item,))
+    res = c.fetchall()
+    print(res)
+    if res == []:
+        return True
+    else:
+        return False
+
 def delete_selected(select):
-    date, name, ident = select
-    c.execute('DELETE FROM holiday WHERE id=?', (ident,))
+    date, name = select
+    c.execute('DELETE FROM holiday WHERE name=?', (name,))
     data.commit()
