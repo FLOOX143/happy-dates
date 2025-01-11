@@ -26,6 +26,7 @@ for i, j in enumerate(list):
     listbox.insert(i, j)
     # добавление нового элемента
 
+
 def del_list():
     listbox.delete(0, 'end')
     list = Selection()
@@ -40,7 +41,6 @@ def delete3():
     try:
         selection = listbox.curselection()
         selected = listbox.get(selection[0])
-        print(selected)
         listbox.delete(selection[0])
     except IndexError:
         return
@@ -108,6 +108,75 @@ def openNewWindow():
     #Ввод праздника
 
 
+def new_window_for_changes():
+    newchanges = Toplevel(Window)
+    newchanges.title("New Window")
+    newchanges.geometry("200x150")
+    newchanges.resizable(False, False)
+
+    def close():
+        newchanges.destroy()
+    
+    def add_to_the_database():
+        date = input_data.get()
+        holiday = Entering_a_holiday.get()
+        result = compare(holiday)
+        if result is True:
+            add(date, holiday)
+        else:
+            messagebox.showerror("Ошибка", "Такое название праздника уже существует!")
+        close()
+        listbox.delete(0, 'end')
+        list = Selection()
+        for i, j in enumerate(list):
+            listbox.insert(i, j)
+        #Добавляет в базу данных
+
+    def make_changes():
+        try:
+            selection = listbox.curselection()
+            selected = listbox.get(selection[0])
+            listbox.delete(selection[0])
+        except IndexError:
+            return
+        return selected
+
+    
+    
+    changes = Button(newchanges, text="Изменить", command=add_to_the_database)
+    changes.pack(side=TOP)
+    changes.place(x=1, y=119)
+    changes.place(width=99, height=30)
+    #Кнопка "Добавить" в окне "newchanges".
+
+
+    Cancel = Button(newchanges, text="Отмена", command=close)
+    Cancel.pack(side=TOP)
+    Cancel.place(x=100, y=119)
+    Cancel.place(width=99, height=30)
+    #Кнопка "Отмена" в окне "newchanges". Закрывает окно.
+
+    data = Label(newchanges, text="Дата:")
+    data.place(x=5, y=10)
+    #Текст перед вводом
+
+    input_data = Entry(newchanges)
+    input_data.place(x=5, y=30)
+    input_data.place(width=190, height=20)
+    input_data.insert(make_changes())
+    #Ввод даты
+
+    holiday = Label(newchanges, text="Праздник:")
+    holiday.place(x=5, y=60)
+    #Текст перед вводом
+
+    Entering_a_holiday = Entry(newchanges)
+    Entering_a_holiday.place(x=5, y=80)
+    Entering_a_holiday.place(width=190, height=20)
+    Entering_a_holiday.insert(make_changes())
+    #Ввод праздника
+    
+
 Add = Button(Window, text="Добавить", command=openNewWindow)
 Add.pack(side=TOP)
 Add.place(x=0, y=0)
@@ -120,7 +189,7 @@ Delete_everything.place(x=150, y=0)
 Delete_everything.place(width=150, height=50)
 #Кнопка "Удалить всё" в главном окне. Очищает полностью базу данных.
 
-change = Button(Window, text="Изменить")
+change = Button(Window, text="Изменить", command=new_window_for_changes)
 change.pack(side=TOP)
 change.place(x=300, y=0)
 change.place(width=150, height=50)

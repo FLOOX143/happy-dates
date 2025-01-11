@@ -32,7 +32,7 @@ def compare(item):
         return True
     else:
         return False
-
+    
 def delete_selected(select):
     date, name = select
     c.execute('DELETE FROM holiday WHERE name=?', (name,))
