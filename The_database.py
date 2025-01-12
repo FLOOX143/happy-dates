@@ -24,11 +24,12 @@ def delete():
     c.execute("DELETE FROM holiday")
     data.commit()
 
-def compare(item):
-    c.execute('SELECT name FROM holiday WHERE name=?', (item,))
+def compare(date, name):
+    c.execute('SELECT name FROM holiday WHERE name=?', (name,))
     res = c.fetchall()
-    print(res)
-    if res == []:
+    if name == '' or date == '':
+        return None
+    elif res == []:
         return True
     else:
         return False

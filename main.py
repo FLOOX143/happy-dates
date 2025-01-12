@@ -62,9 +62,11 @@ def openNewWindow():
     def add_to_the_database():
         date = input_data.get()
         holiday = Entering_a_holiday.get()
-        result = compare(holiday)
+        result = compare(date, holiday)
         if result is True:
             add(date, holiday)
+        elif result is None:
+            messagebox.showerror("Ошибка", "Нельзя оставить значение пустым!")
         else:
             messagebox.showerror("Ошибка", "Такое название праздника уже существует!")
         To_close()
@@ -73,7 +75,6 @@ def openNewWindow():
         for i, j in enumerate(list):
             listbox.insert(i, j)
         #Добавляет в базу данных
-    
     
 
     Add = Button(newWindow, text="Добавить", command=add_to_the_database)
