@@ -9,9 +9,7 @@ name text NOT NULL
 )""")
 
 def add(Date, Name):
-    Date1 = Date
-    Name1 = Name
-    c.execute('INSERT INTO holiday(date, name) VALUES(?, ?)', (Date1, Name1))
+    c.execute('INSERT INTO holiday(date, name) VALUES(?, ?)', (Date, Name))
     data.commit()
     return
 
@@ -36,5 +34,5 @@ def compare(date, name):
     
 def delete_selected(select):
     date, name = select
-    c.execute('DELETE FROM holiday WHERE name=?', (name,))
+    c.execute('DELETE FROM holiday WHERE date=? AND name=?', (date, name))
     data.commit()

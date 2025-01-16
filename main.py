@@ -37,11 +37,14 @@ def delete2():
     delete()
     listbox.delete(0, 'end')
 
-def delete3():
+def delete3(flag=False, date=None, name=None):
     try:
-        selection = listbox.curselection()
-        selected = listbox.get(selection[0])
-        listbox.delete(selection[0])
+        if flag is False:
+            selection = listbox.curselection()
+            selected = listbox.get(selection[0])
+            listbox.delete(selection[0])
+        else:
+            selected = date, name
     except IndexError:
         return
     delete_selected(selected)
@@ -115,6 +118,7 @@ def new_window_for_changes():
     newchanges.geometry("200x150")
     newchanges.resizable(False, False)
 
+
     def close():
         newchanges.destroy()
 
@@ -127,22 +131,18 @@ def new_window_for_changes():
             return
         return selected
     
-    result = make_changes()
-    date, name = result
+    try:
+        result = make_changes()
+        dateget, nameget = result
+    except TypeError:
+        pass
 
     def add_to_the_database():
         date = input_data.get()
         holiday = Entering_a_holiday.get()
-        result = compare(holiday)
-        if result is True:
-            add(date, holiday)
-        else:
-            messagebox.showerror("Ошибка", "Такое название праздника уже существует!")
+        add(date, holiday)
         close()
-        
-        listbox.delete(date, name)
-        delete_selected(date, name)
-
+        delete3(True, dateget, nameget)
         listbox.delete(0, 'end')
         list = Selection()
         for i, j in enumerate(list):
@@ -171,7 +171,7 @@ def new_window_for_changes():
     input_data = Entry(newchanges)
     input_data.place(x=5, y=30)
     input_data.place(width=190, height=20)
-    input_data.insert(0, date)
+    input_data.insert(0, dateget)
     #Ввод даты
 
     holiday = Label(newchanges, text="Праздник:")
@@ -181,7 +181,7 @@ def new_window_for_changes():
     Entering_a_holiday = Entry(newchanges)
     Entering_a_holiday.place(x=5, y=80)
     Entering_a_holiday.place(width=190, height=20)
-    Entering_a_holiday.insert(0, name)
+    Entering_a_holiday.insert(0, nameget)
     #Ввод праздника
     
 
