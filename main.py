@@ -2,13 +2,16 @@ from os import system
 from tkinter import *
 from tkinter import messagebox
 from tkinter.ttk import *
+from win10toast import ToastNotifier
+from datetime import datetime
+
 
 import sqlite3
 from datetime import datetime
 import os
 from The_database import *
 
-
+toaster = ToastNotifier()
 Window = Tk()
 Window.title("Календарь праздников")
 Window.geometry("600x600+0+0")
@@ -20,6 +23,34 @@ listbox.place(x=10, y=55)
 listbox.place(width=580, height=530)
 # создаем список
 
+def today_is():
+    day = str(datetime.now().day)
+    month = str(datetime.now().month)
+
+    if int(month) < 10:
+        month = '0' + month
+    if int(day) < 10:
+        day = '0' + day
+    today_is_the_data = day + "." + month
+    return today_is_the_data
+
+def raise_notification(name):
+    try:
+        toaster.show_toast("Сегодня праздник!", f'Праздник: {name}', threaded=True,
+                    icon_path=None, duration=5)
+    except TypeError:
+        pass
+
+def notify_check():
+    data = Selection()
+    date, name = data[0]
+    try:
+        if today_is() == date:
+            raise_notification(name)
+    except IndexError:
+        return
+
+notify_check()
 
 list = Selection()
 for i, j in enumerate(list):
