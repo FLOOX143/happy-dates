@@ -23,7 +23,13 @@ listbox.place(x=10, y=55)
 listbox.place(width=580, height=530)
 # создаем список
 
-def today_is():
+def limit_length(P):
+    if len(P) <= 5:
+        return True
+    else:
+        return False
+
+def today_is(): # получение сегодняшней даты
     day = str(datetime.now().day)
     month = str(datetime.now().month)
 
@@ -34,17 +40,17 @@ def today_is():
     today_is_the_data = day + "." + month
     return today_is_the_data
 
-def raise_notification(name):
+def raise_notification(name): # вывод уведомления если сегодня праздник
     try:
         toaster.show_toast("Сегодня праздник!", f'Праздник: {name}', threaded=True,
                     icon_path=None, duration=5)
     except TypeError:
         pass
 
-def notify_check():
-    data = Selection()
-    date, name = data[0]
+def notify_check(): # проверка на праздник сегодня
     try:
+        data = Selection()
+        date, name = data[0]
         if today_is() == date:
             raise_notification(name)
     except IndexError:
@@ -57,18 +63,17 @@ for i, j in enumerate(list):
     listbox.insert(i, j)
     # добавление нового элемента
 
-
-def del_list():
+def delete_listbox(): # очистка поля значений в окне
     listbox.delete(0, 'end')
     list = Selection()
     for i, j in enumerate(list):
         listbox.insert(i, j)
 
-def delete2():
+def delete_all(): # удалить всё
     delete()
     listbox.delete(0, 'end')
 
-def delete3(flag=False, date=None, name=None):
+def delete_ones(flag=False, date=None, name=None): # удалить единичный объект
     try:
         if flag is False:
             selection = listbox.curselection()
@@ -81,19 +86,16 @@ def delete3(flag=False, date=None, name=None):
     delete_selected(selected)
 
 
-def openNewWindow():
+def openNewWindow(): #Создание второстепенного окна
     newWindow = Toplevel(Window)
     newWindow.title("New Window")
     newWindow.geometry("200x150")
     newWindow.resizable(False, False)
 
-    #Создание второстепенного окна
-
-
-    def To_close():
+    def To_close(): # закрыть мини окошко
         newWindow.destroy()
 
-    def add_to_the_database():
+    def add_to_the_database(): # Добавляет в базу данных
         date = input_data.get()
         holiday = Entering_a_holiday.get()
         result = compare(date, holiday)
@@ -108,7 +110,7 @@ def openNewWindow():
         list = Selection()
         for i, j in enumerate(list):
             listbox.insert(i, j)
-        #Добавляет в базу данных
+        
     
 
     Add = Button(newWindow, text="Добавить", command=add_to_the_database)
@@ -128,7 +130,8 @@ def openNewWindow():
     data.place(x=5, y=10)
     #Текст перед вводом
 
-    input_data = Entry(newWindow)
+    vcmd = (newWindow.register(limit_length), '%P')
+    input_data = Entry(newWindow, validate='key', validatecommand=vcmd)
     input_data.place(x=5, y=30)
     input_data.place(width=190, height=20)
     #Ввод даты
@@ -143,17 +146,17 @@ def openNewWindow():
     #Ввод праздника
 
 
-def new_window_for_changes():
+def new_window_for_changes(): # добавление окна для извенения значений
     newchanges = Toplevel(Window)
     newchanges.title("New Window")
     newchanges.geometry("200x150")
     newchanges.resizable(False, False)
 
 
-    def close():
+    def close(): # закрыть мини окошко
         newchanges.destroy()
 
-    def make_changes():
+    def make_changes(): # выделение объекта
         try:
             selection = listbox.curselection()
             selected = listbox.get(selection[0])
@@ -163,30 +166,28 @@ def new_window_for_changes():
         return selected
     
     try:
-        result = make_changes()
+        result = make_changes() # получение значений
         dateget, nameget = result
     except TypeError:
         pass
 
-    def add_to_the_database():
+    def add_to_the_database(): # Добавляет в базу данных
         date = input_data.get()
         holiday = Entering_a_holiday.get()
         add(date, holiday)
         close()
-        delete3(True, dateget, nameget)
+        delete_ones(True, dateget, nameget)
         listbox.delete(0, 'end')
         list = Selection()
         for i, j in enumerate(list):
             listbox.insert(i, j)
-        #Добавляет в базу данных
-
-
+        
     
     changes = Button(newchanges, text="Изменить", command=add_to_the_database)
     changes.pack(side=TOP)
     changes.place(x=1, y=119)
     changes.place(width=99, height=30)
-    #Кнопка "Добавить" в окне "newchanges".
+    #Кнопка "Изменить" в окне "newchanges".
 
 
     Cancel = Button(newchanges, text="Отмена", command=close)
@@ -199,7 +200,8 @@ def new_window_for_changes():
     data.place(x=5, y=10)
     #Текст перед вводом
 
-    input_data = Entry(newchanges)
+    vcmd = (newchanges.register(limit_length), '%P')
+    input_data = Entry(newchanges, validate='key', validatecommand=vcmd)
     input_data.place(x=5, y=30)
     input_data.place(width=190, height=20)
     input_data.insert(0, dateget)
@@ -222,7 +224,7 @@ Add.place(x=0, y=0)
 Add.place(width=150, height=50)
 #Кнопка "Добавить" в главном окне. Открывает окно по добавлению праздника.
 
-Delete_everything = Button(Window, text="Удалить всё", command=delete2)
+Delete_everything = Button(Window, text="Удалить всё", command=delete_all)
 Delete_everything.pack(side=TOP)
 Delete_everything.place(x=150, y=0)
 Delete_everything.place(width=150, height=50)
@@ -234,7 +236,7 @@ change.place(x=300, y=0)
 change.place(width=150, height=50)
 #Кнопка "Изменить" в главном окне. С помощью нее можно изменить определенный праздник.
 
-destroy = Button(Window, text="Удалить", command=delete3)
+destroy = Button(Window, text="Удалить", command=delete_ones)
 destroy.pack(side=TOP)
 destroy.place(x=450, y=0)
 destroy.place(width=150, height=50)
