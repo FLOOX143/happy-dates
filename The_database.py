@@ -25,6 +25,10 @@ def delete():
 def compare(date, name):
     c.execute('SELECT name FROM holiday WHERE name=?', (name,))
     res = c.fetchall()
+    count = 0
+    for i in range(len(name)):
+        if name[i] == name[i - 1] and name[i] == ' ':
+            return False
     if name == '' or date == '':
         return None
     elif res == []:
