@@ -5,16 +5,31 @@ from qfluentwidgets import *
 from win10toast import ToastNotifier
 from datetime import *
 from The_database import *
+import json
 
 app = QApplication([])
 app.setStyle('fusion')
 
 window = FluentWindow()
 window.resize(700, 600)
-setTheme(Theme.AUTO)
 window.setWindowIcon(QIcon('icons8-book-64.png'))
 app.setWindowIcon(QIcon('icons8-book-64.png'))
 window.setWindowTitle('Happy-Dates')
+
+with open("config/config.json", "r", encoding="utf-8") as cfg:
+    data = json.load(cfg)
+    setThemeColor(QColor(data["QFluentWidgets"]["ThemeColor"]))
+
+    theme_mapping = {
+    "Light": Theme.LIGHT,
+    "Dark": Theme.DARK,
+    "Auto": Theme.AUTO
+}
+    theme_mode = data["QFluentWidgets"]["ThemeMode"]
+    get_theme = theme_mapping.get(theme_mode)
+    setTheme(get_theme)
+
+    cfg.close()
 
 
 home_page = QWidget(window)
@@ -49,32 +64,41 @@ settings_page_heading.setGeometry(50, 10, 400, 30)
 
 def theme_change(text):
     if text == 'Светлая':
-        setTheme(Theme.LIGHT)
+        setTheme(Theme.LIGHT, save=True)
     elif text == 'Тёмная':
-        setTheme(Theme.DARK)
+        setTheme(Theme.DARK, save=True)
     elif text == 'Системная':
-        setTheme(Theme.AUTO)
+        setTheme(Theme.AUTO, save=True)
 
-theme_card = HeaderCardWidget(settings_page)
-theme_card.setGeometry(50, 70, 560, 200)
+theme_card = GroupHeaderCardWidget(settings_page)
+theme_card.setGeometry(50, 70, 560, 130)
 theme_card.setTitle('Персонализация')
 
-system_button = RadioButton("Системная")
-light_button = RadioButton("Светлая")
-dark_button = RadioButton("Тёмная")
+system_button = RadioButton(text="Системная", parent=theme_card)
+system_button.setGeometry(30, 70, 100, 30)
+
+light_button = RadioButton(text="Светлая", parent=theme_card)
+light_button.setGeometry(160, 70, 100, 30)
+
+dark_button = RadioButton(text="Тёмная", parent=theme_card)
+dark_button.setGeometry(290, 70, 100, 30)
 
 system_theme = QButtonGroup(theme_card)
 system_theme.addButton(system_button)
 system_theme.addButton(light_button)
 system_theme.addButton(dark_button)
 system_theme.buttonToggled.connect(lambda button: theme_change(button.text()))
-system_button.setChecked(True)
 
-settings_theme_layout = QHBoxLayout(theme_card)
-settings_theme_layout.addWidget(system_button)
-settings_theme_layout.addWidget(light_button)
-settings_theme_layout.addWidget(dark_button)
-settings_theme_layout.setContentsMargins(50, 50, 50, 50)
+if theme_mode == 'Light':
+    light_button.setChecked(True)
+elif theme_mode == 'Dark':
+    dark_button.setChecked(True)
+elif theme_mode == 'Auto':
+    system_button.setChecked(True)
+
+colpick = ColorPickerButton(color=QColor(data["QFluentWidgets"]["ThemeColor"]), title='Theme color', parent=theme_card)
+colpick.setGeometry(420, 70, 100, 30)
+colpick.colorChanged.connect(lambda color: setThemeColor(QColor(f'{color.name()}'), save=True))
 
 table_widget_add = TableWidget(add_page)
 table_widget_add.setGeometry(10, 290, 620, 250)
