@@ -19,6 +19,10 @@ window.setWindowTitle('Happy-Dates')
 with open("config/config.json", "r", encoding="utf-8") as cfg:
     data = json.load(cfg)
     setThemeColor(QColor(data["QFluentWidgets"]["ThemeColor"]))
+    if data["MainWindow"]["EnableAcrylicBackground"] is True:
+        window.setMicaEffectEnabled(True)
+    else:
+        window.setMicaEffectEnabled(False)
 
     theme_mapping = {
     "Light": Theme.LIGHT,
@@ -60,7 +64,6 @@ window.addSubInterface(settings_page, FluentIcon.SETTING, 'Настройки', 
 
 
 settings_page_heading = TitleLabel(parent=settings_page, text='Настройки приложения')
-settings_page_heading.setGeometry(50, 10, 400, 30)
 
 def theme_change(text):
     if text == 'Светлая':
@@ -70,20 +73,21 @@ def theme_change(text):
     elif text == 'Системная':
         setTheme(Theme.AUTO, save=True)
 
-theme_card = GroupHeaderCardWidget(settings_page)
-theme_card.setGeometry(50, 70, 560, 130)
-theme_card.setTitle('Персонализация')
 
-system_button = RadioButton(text="Системная", parent=theme_card)
-system_button.setGeometry(30, 70, 100, 30)
+personalisation = SubtitleLabel('Персонализация')
 
-light_button = RadioButton(text="Светлая", parent=theme_card)
-light_button.setGeometry(160, 70, 100, 30)
+theme_card = ExpandGroupSettingCard(
+    FluentIcon.BRUSH,
+    "Тема приложения",
+    "Меняет тему приложения",
+    settings_page
+)
 
-dark_button = RadioButton(text="Тёмная", parent=theme_card)
-dark_button.setGeometry(290, 70, 100, 30)
+system_button = RadioButton(text="Системная", parent=settings_page)
+light_button = RadioButton(text="Светлая", parent=settings_page)
+dark_button = RadioButton(text="Тёмная", parent=settings_page)
 
-system_theme = QButtonGroup(theme_card)
+system_theme = QButtonGroup(settings_page)
 system_theme.addButton(system_button)
 system_theme.addButton(light_button)
 system_theme.addButton(dark_button)
@@ -96,9 +100,54 @@ elif theme_mode == 'Dark':
 elif theme_mode == 'Auto':
     system_button.setChecked(True)
 
-colpick = ColorPickerButton(color=QColor(data["QFluentWidgets"]["ThemeColor"]), title='Theme color', parent=theme_card)
-colpick.setGeometry(420, 70, 100, 30)
-colpick.colorChanged.connect(lambda color: setThemeColor(QColor(f'{color.name()}'), save=True))
+settings_card_widget = QWidget()
+settings_theme_layout = QVBoxLayout(settings_card_widget)
+settings_theme_layout.addWidget(system_button)
+settings_theme_layout.addWidget(light_button)
+settings_theme_layout.addWidget(dark_button)
+settings_theme_layout.setContentsMargins(20, 20, 20, 20)
+
+theme_card.addGroupWidget(settings_card_widget)
+
+main_color_card = ColorSettingCard(
+    qconfig.themeColor,
+    FluentIcon.PALETTE,
+    'Главный цвет',
+    'Меняет главный цвет приложения',
+    settings_page,
+    enableAlpha=False
+)
+
+class Config(QConfig):
+    enableAcrylicBackground = ConfigItem("MainWindow", "EnableAcrylicBackground", False, BoolValidator())
+
+
+cfg = Config()
+qconfig.load("config/config.json", cfg)
+
+def is_mica_enabled():
+    if mica_effect_card.isChecked():
+        window.setMicaEffectEnabled(True)
+    else:
+        window.setMicaEffectEnabled(False)
+
+mica_effect_card = SwitchSettingCard(
+    FluentIcon.TRANSPARENT,
+    'Эффект Слюды',
+    'Добавляет эффект полупрозрачности',
+    cfg.enableAcrylicBackground,
+    settings_page
+)
+mica_effect_card.checkedChanged.connect(lambda: is_mica_enabled())
+
+main_layout = QVBoxLayout(settings_page)
+main_layout.addWidget(settings_page_heading, alignment=Qt.AlignmentFlag.AlignCenter)
+main_layout.addWidget(personalisation)
+main_layout.addWidget(mica_effect_card)
+main_layout.addWidget(theme_card)
+main_layout.addWidget(main_color_card)
+main_layout.addStretch(1)
+
 
 table_widget_add = TableWidget(add_page)
 table_widget_add.setGeometry(10, 290, 620, 250)
