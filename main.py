@@ -140,13 +140,48 @@ mica_effect_card = SwitchSettingCard(
 )
 mica_effect_card.checkedChanged.connect(lambda: is_mica_enabled())
 
-main_layout = QVBoxLayout(settings_page)
-main_layout.addWidget(settings_page_heading, alignment=Qt.AlignmentFlag.AlignCenter)
-main_layout.addWidget(personalisation)
-main_layout.addWidget(mica_effect_card)
-main_layout.addWidget(theme_card)
-main_layout.addWidget(main_color_card)
-main_layout.addStretch(1)
+provide_feedback_card = HyperlinkCard(
+    'https://github.com/FLOOX143/happy-dates/issues',
+    'Оставить отзыв',
+    FluentIcon.FEEDBACK,
+    'Обратная Связь',
+    'Позволяет разработчикам узнать о недоработках',
+    settings_page
+)
+
+help_documentation_card = PrimaryPushSettingCard(
+    'Руководство',
+    FluentIcon.INFO,
+    'Руководство по пользованию',
+    'Помогает разобраться в работе программы',
+    settings_page
+)
+
+main_settings_page_layout = QVBoxLayout(settings_page)
+
+settings_page_personalisation_widget = QWidget()
+settings_page_personalisation_layout = QVBoxLayout(settings_page_personalisation_widget)
+settings_page_personalisation_layout.addWidget(personalisation)
+settings_page_personalisation_layout.addWidget(mica_effect_card)
+settings_page_personalisation_layout.addWidget(theme_card)
+settings_page_personalisation_layout.addWidget(main_color_card)
+settings_page_personalisation_layout.addStretch(1)
+
+about_label = SubtitleLabel('О программе')
+settings_page_about_widget = QWidget()
+settings_page_about_layout = QVBoxLayout(settings_page_about_widget)
+settings_page_about_layout.addWidget(about_label)
+settings_page_about_layout.addWidget(provide_feedback_card)
+settings_page_about_layout.addWidget(help_documentation_card)
+settings_page_about_layout.addStretch(1)
+
+main_settings_page_layout.addWidget(settings_page_heading)
+main_settings_page_layout.addWidget(settings_page_personalisation_widget)
+main_settings_page_layout.addWidget(settings_page_about_widget)
+main_settings_page_layout.setContentsMargins(50, 10, 50, 50)
+main_settings_page_layout.setSpacing(20)
+main_settings_page_layout.addStretch(1)
+
 
 
 table_widget_add = TableWidget(add_page)
