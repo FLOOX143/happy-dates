@@ -24,15 +24,13 @@ with open("config/config.json", "r", encoding="utf-8") as cfg:
     else:
         window.setMicaEffectEnabled(False)
 
-    theme_mapping = {
-    "Light": Theme.LIGHT,
-    "Dark": Theme.DARK,
-    "Auto": Theme.AUTO
-}
     theme_mode = data["QFluentWidgets"]["ThemeMode"]
-    get_theme = theme_mapping.get(theme_mode)
-    setTheme(get_theme)
-
+    if theme_mode == "Light":
+        setTheme(Theme.LIGHT, lazy=True)
+    elif theme_mode == "Dark":
+        setTheme(Theme.DARK, lazy=True)
+    elif theme_mode == "Auto":
+        setTheme(Theme.AUTO, lazy=True)
     cfg.close()
 
 
@@ -61,6 +59,67 @@ window.addSubInterface(change_page, FluentIcon.EDIT, 'Редактировать
 window.addSubInterface(delete_page, FluentIcon.DELETE, 'Удалить', NavigationItemPosition.SCROLL)
 window.addSubInterface(search_page, FluentIcon.SEARCH, 'Поиск', NavigationItemPosition.SCROLL)
 window.addSubInterface(settings_page, FluentIcon.SETTING, 'Настройки', NavigationItemPosition.BOTTOM)
+
+
+main_search_page_layout = QVBoxLayout(search_page)
+
+search_page_heading = TitleLabel(parent=search_page, text='Поиск')
+
+
+def search_table(string, output_table):
+    if string == '':
+        update_everything()
+        return
+    output_table.clear()
+    output_table.setHorizontalHeaderLabels(["Наименование", "Дата", "Тип", "Создано"])
+    data_base = Selection()
+    id_container = []
+    for string_id, name, date, type, created in data_base:
+        compare_string = ''
+        for i in name:
+            compare_string += str(i)
+            if compare_string.lower() == string.lower():
+                id_container.append(string_id)
+    output_table.setRowCount(len(id_container))
+    for i in range(len(id_container)):
+        for string_id, name, date, type, created in data_base:
+            if string_id == id_container[i]:
+                output_table.setItem(i, 0, QTableWidgetItem(name))
+                output_table.setItem(i, 1, QTableWidgetItem(date))
+                output_table.setItem(i, 2, QTableWidgetItem(type))
+                output_table.setItem(i, 3, QTableWidgetItem(created))
+
+
+search_entry = SearchLineEdit(search_page)
+search_entry.textChanged.connect(lambda text: search_table(text, search_page_table))
+
+search_page_table = TableWidget(search_page)
+search_page_table.setColumnCount(4)
+search_page_table.setHorizontalHeaderLabels(["Наименование", "Дата", "Тип", "Создано"])
+search_page_table.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+search_page_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+
+def TableWidget_output():
+    search_page_table.setRowCount(0)
+    dict = Selection()
+
+    max = search_max()
+
+    search_page_table.setRowCount(max)
+
+    for el in dict:
+        search_page_table.setItem(max - el[0], 0, QTableWidgetItem(el[1]))
+        search_page_table.setItem(max - el[0], 1, QTableWidgetItem(el[2]))
+        search_page_table.setItem(max - el[0], 2, QTableWidgetItem(el[3]))
+        search_page_table.setItem(max - el[0], 3, QTableWidgetItem(el[4]))
+
+
+main_search_page_layout.addWidget(search_page_heading, alignment=Qt.AlignmentFlag.AlignLeft)
+main_search_page_layout.addWidget(search_entry, alignment=Qt.AlignmentFlag.AlignCenter)
+main_search_page_layout.addWidget(search_page_table, stretch=1)
+main_search_page_layout.setContentsMargins(50, 10, 50, 50)
+main_search_page_layout.addStretch(1)
+
 
 
 settings_page_heading = TitleLabel(parent=settings_page, text='Настройки приложения')
@@ -109,6 +168,10 @@ settings_theme_layout.setContentsMargins(20, 20, 20, 20)
 
 theme_card.addGroupWidget(settings_card_widget)
 
+def main_color_changed(col):
+    setThemeColor(QColor(f'{col.name()}'))
+    window.update()
+
 main_color_card = ColorSettingCard(
     qconfig.themeColor,
     FluentIcon.PALETTE,
@@ -117,6 +180,7 @@ main_color_card = ColorSettingCard(
     settings_page,
     enableAlpha=False
 )
+main_color_card.colorChanged.connect(lambda color: main_color_changed(color))
 
 class Config(QConfig):
     enableAcrylicBackground = ConfigItem("MainWindow", "EnableAcrylicBackground", False, BoolValidator())
@@ -264,6 +328,7 @@ def update_everything():
     TableWidget_ADD3()
     TableWidget_ADD2()
     TableWidget_ADD1()
+    TableWidget_output()
 
 def add_The_database():
     Name = line_edit_add_Name.text()
