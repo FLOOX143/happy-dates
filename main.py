@@ -346,10 +346,13 @@ def change_The_database():
         update_everything()
 
 def delete_choose():
-    Name, Date, Type, Created = row_data
-    delete_selected(Name, Date, Type, Created)
-    update()
-    update_everything()
+    try:
+        Name, Date, Type, Created = row_data
+        delete_selected(Name, Date, Type, Created)
+        update()
+        update_everything()
+    except NameError:
+        pass
 
 
 
@@ -411,11 +414,14 @@ def receiving_data_table_widget_delete():
             row_data_2.append(item.text())
 
 def delete_choose_table_widget_delete():
-    Name, Date, Type, Created = row_data_2
-    delete_selected(Name, Date, Type, Created)
-    update()
+    try:
+        Name, Date, Type, Created = row_data_2
+        delete_selected(Name, Date, Type, Created)
+        update()
 
-    update_everything()
+        update_everything()
+    except NameError:
+        pass
 
 def delete_table_widget_delete():
     delete()
