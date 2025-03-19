@@ -99,19 +99,26 @@ search_page_table.setHorizontalHeaderLabels(["Наименование", "Дат
 search_page_table.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 search_page_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
-def TableWidget_output():
-    search_page_table.setRowCount(0)
+def search_max():
+    dict = Selection()
+    max = 0
+    for i in dict:
+        max += 1
+    return max
+
+def TableWidget_update(table):
+    table.setRowCount(0)
     dict = Selection()
 
     max = search_max()
 
-    search_page_table.setRowCount(max)
+    table.setRowCount(max)
 
     for el in dict:
-        search_page_table.setItem(max - el[0], 0, QTableWidgetItem(el[1]))
-        search_page_table.setItem(max - el[0], 1, QTableWidgetItem(el[2]))
-        search_page_table.setItem(max - el[0], 2, QTableWidgetItem(el[3]))
-        search_page_table.setItem(max - el[0], 3, QTableWidgetItem(el[4]))
+        table.setItem(max - el[0], 0, QTableWidgetItem(el[1]))
+        table.setItem(max - el[0], 1, QTableWidgetItem(el[2]))
+        table.setItem(max - el[0], 2, QTableWidgetItem(el[3]))
+        table.setItem(max - el[0], 3, QTableWidgetItem(el[4]))
 
 
 main_search_page_layout.addWidget(search_page_heading, alignment=Qt.AlignmentFlag.AlignLeft)
@@ -119,8 +126,6 @@ main_search_page_layout.addWidget(search_entry, alignment=Qt.AlignmentFlag.Align
 main_search_page_layout.addWidget(search_page_table, stretch=1)
 main_search_page_layout.setContentsMargins(50, 10, 50, 50)
 main_search_page_layout.addStretch(1)
-
-
 
 settings_page_heading = TitleLabel(parent=settings_page, text='Настройки приложения')
 
@@ -247,88 +252,18 @@ main_settings_page_layout.setSpacing(20)
 main_settings_page_layout.addStretch(1)
 
 
-
 table_widget_add = TableWidget(add_page)
-table_widget_add.setGeometry(10, 290, 620, 250)
 table_widget_add.setColumnCount(4)
 table_widget_add.setHorizontalHeaderLabels(["Наименование", "Дата", "Тип", "Создано"])
-table_widget_add.setColumnWidth(0, 230)  
-table_widget_add.setColumnWidth(1, 100) 
-table_widget_add.setColumnWidth(2, 150)
-table_widget_add.setColumnWidth(3, 110)
-table_widget_add.setEditTriggers(QTableWidget.NoEditTriggers)
-table_widget_add.horizontalHeader().setSectionResizeMode(QHeaderView.Fixed)
-
-def search_max():
-    dict = Selection()
-    max = 0
-    for i in dict:
-        max += 1
-    return max
-
-def TableWidget_ADD1():
-    table_widget.setRowCount(0)
-    dict = Selection()
-
-    max = search_max()
-
-    table_widget.setRowCount(max)
-
-    for el in dict:
-        table_widget.setItem(max - el[0], 0, QTableWidgetItem(el[1]))
-        table_widget.setItem(max - el[0], 1, QTableWidgetItem(el[2]))
-        table_widget.setItem(max - el[0], 2, QTableWidgetItem(el[3]))
-        table_widget.setItem(max - el[0], 3, QTableWidgetItem(el[4]))
-
-def TableWidget_ADD2():
-    table_widget_add.setRowCount(0)
-    dict = Selection()
-
-    max = search_max()
-
-    table_widget_add.setRowCount(max)
-
-    for el in dict:
-        table_widget_add.setItem(max - el[0], 0, QTableWidgetItem(el[1]))
-        table_widget_add.setItem(max - el[0], 1, QTableWidgetItem(el[2]))
-        table_widget_add.setItem(max - el[0], 2, QTableWidgetItem(el[3]))
-        table_widget_add.setItem(max - el[0], 3, QTableWidgetItem(el[4]))
-
-
-def TableWidget_ADD3():
-    table_widget_change.setRowCount(0)
-    dict = Selection()
-
-    max = search_max()
-
-    table_widget_change.setRowCount(max)
-
-    for el in dict:
-        table_widget_change.setItem(max - el[0], 0, QTableWidgetItem(el[1]))
-        table_widget_change.setItem(max - el[0], 1, QTableWidgetItem(el[2]))
-        table_widget_change.setItem(max - el[0], 2, QTableWidgetItem(el[3]))
-        table_widget_change.setItem(max - el[0], 3, QTableWidgetItem(el[4]))
-
-def TableWidget_ADD4():
-    table_widget_delete.setRowCount(0)
-    dict = Selection()
-
-    max = search_max()
-
-    table_widget_delete.setRowCount(max)
-
-    for el in dict:
-        table_widget_delete.setItem(max - el[0], 0, QTableWidgetItem(el[1]))
-        table_widget_delete.setItem(max - el[0], 1, QTableWidgetItem(el[2]))
-        table_widget_delete.setItem(max - el[0], 2, QTableWidgetItem(el[3]))
-        table_widget_delete.setItem(max - el[0], 3, QTableWidgetItem(el[4]))
+table_widget_add.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+table_widget_add.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
 def update_everything():
-    TableWidget_ADD4()
-    TableWidget_ADD3()
-    TableWidget_ADD2()
-    TableWidget_ADD1()
-    TableWidget_output()
+    TableWidget_update(table_widget_add)
+    TableWidget_update(table_widget_change)
+    TableWidget_update(table_widget_delete)
+    TableWidget_update(table_widget)
+    TableWidget_update(search_page_table)
 
 def add_The_database():
     Name = line_edit_add_Name.text()
@@ -344,42 +279,40 @@ def add_The_database():
         update_everything()
 
 button_add = PushButton(parent=add_page, text='Добавить')
-button_add.setGeometry(10, 10, 150, 50)
+button_add.setFixedSize(150, 50)
 button_add.clicked.connect(add_The_database)
-
-line_edit_add_Name = LineEdit(parent=add_page)
-line_edit_add_Name.setGeometry(10, 100, 630, 50)
-
-body_label_add_Name = BodyLabel(parent=add_page, text="Наименование")
-body_label_add_Name.setGeometry(20, 60, 550, 50)
-
 line_edit_add_Date = LineEdit(parent=add_page)
-line_edit_add_Date.setGeometry(10, 170, 630, 50)
-
+line_edit_add_Name = LineEdit(parent=add_page)
+body_label_add_Name = BodyLabel(parent=add_page, text="Наименование")
 body_label_add_Date = BodyLabel(parent=add_page, text="Дата")
-body_label_add_Date.setGeometry(20, 130, 550, 50)
-
 line_edit_add_Type = ComboBox(parent=add_page)
-line_edit_add_Type.setGeometry(10, 240, 630, 40)
 line_edit_add_Type.addItems(["Семейный", "Профессиональный", "Государственный", "Международный", "Народный", "Религиозный"])
-
 body_label_add_Type = BodyLabel(parent=add_page, text="Тип")
-body_label_add_Type.setGeometry(20, 200, 550, 50)
 
+add_page_layout = QVBoxLayout(add_page)
+add_button_layout_widget = QWidget()
+add_button_layout = QHBoxLayout(add_button_layout_widget)
+
+add_button_layout.addWidget(button_add, alignment=Qt.AlignmentFlag.AlignLeft)
+add_page_layout.addWidget(add_button_layout_widget)
+add_page_layout.addWidget(body_label_add_Name)
+add_page_layout.addWidget(line_edit_add_Name)
+add_page_layout.addWidget(body_label_add_Date)
+add_page_layout.addWidget(line_edit_add_Date)
+add_page_layout.addWidget(body_label_add_Type)
+add_page_layout.addWidget(line_edit_add_Type)
+add_page_layout.addWidget(table_widget_add, stretch=1)
+
+add_page_layout.setContentsMargins(50, 10, 50, 0)
+add_page_layout.setSpacing(20)
+add_page_layout.addStretch(1)
 
 
 table_widget_change = TableWidget(change_page)
-table_widget_change.setGeometry(10, 290, 620, 250)
 table_widget_change.setColumnCount(4)
 table_widget_change.setHorizontalHeaderLabels(["Наименование", "Дата", "Тип", "Создано"])
-table_widget_change.setColumnWidth(0, 230)  
-table_widget_change.setColumnWidth(1, 100) 
-table_widget_change.setColumnWidth(2, 150)
-table_widget_change.setColumnWidth(3, 110)
-table_widget_change.setEditTriggers(QTableWidget.NoEditTriggers)
-table_widget_change.horizontalHeader().setSectionResizeMode(QHeaderView.Fixed)
-
-
+table_widget_change.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+table_widget_change.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
 
 def receiving_data():
@@ -423,42 +356,49 @@ def delete_choose():
 table_widget_change.cellClicked.connect(receiving_data)
 
 button_change = PushButton(parent=change_page, text='Редактировать')
-button_change.setGeometry(10, 10, 150, 50)
+button_change.setFixedSize(150, 50)
 button_change.clicked.connect(change_The_database)
 button_change.clicked.connect(delete_choose)
 
 line_edit_change_Name = LineEdit(parent=change_page)
-line_edit_change_Name.setGeometry(10, 100, 630, 50)
 
 body_label_change_Name = BodyLabel(parent=change_page, text="Наименование")
-body_label_change_Name.setGeometry(20, 60, 550, 50)
 
 line_edit_change_Date = LineEdit(parent=change_page)
-line_edit_change_Date.setGeometry(10, 170, 630, 50)
 
 body_label_change_Date = BodyLabel(parent=change_page, text="Дата")
-body_label_change_Date.setGeometry(20, 130, 550, 50)
 
 line_edit_change_Type = ComboBox(parent=change_page)
-line_edit_change_Type.setGeometry(10, 240, 630, 40)
 line_edit_change_Type.addItems(["Семейный", "Профессиональный", "Государственный", "Международный", "Народный", "Религиозный"])
 
 body_label_change_Type = BodyLabel(parent=change_page, text="Тип")
-body_label_change_Type.setGeometry(20, 200, 550, 50)
+
+
+change_page_layout = QVBoxLayout(change_page)
+button_change_layout_widget = QWidget()
+button_change_layout = QHBoxLayout(button_change_layout_widget)
+
+button_change_layout.addWidget(button_change, alignment=Qt.AlignmentFlag.AlignLeft)
+change_page_layout.addWidget(button_change_layout_widget)
+change_page_layout.addWidget(body_label_change_Name)
+change_page_layout.addWidget(line_edit_change_Name)
+change_page_layout.addWidget(body_label_change_Date)
+change_page_layout.addWidget(line_edit_change_Date)
+change_page_layout.addWidget(body_label_change_Type)
+change_page_layout.addWidget(line_edit_change_Type)
+change_page_layout.addWidget(table_widget_change, stretch=1)
+
+change_page_layout.setContentsMargins(50, 10, 50, 0)
+change_page_layout.setSpacing(20)
+change_page_layout.addStretch(1)
 
 
 table_widget_delete = TableWidget(delete_page)
-table_widget_delete.setGeometry(10, 70, 620, 460)
-
 table_widget_delete.setRowCount(1)
 table_widget_delete.setColumnCount(4)
 table_widget_delete.setHorizontalHeaderLabels(["Наименование", "Дата", "Тип", "Создано"])
-table_widget_delete.setColumnWidth(0, 230)  
-table_widget_delete.setColumnWidth(1, 100) 
-table_widget_delete.setColumnWidth(2, 150)
-table_widget_delete.setColumnWidth(3, 110)
+table_widget_delete.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 table_widget_delete.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-table_widget_delete.horizontalHeader().setSectionResizeMode(QHeaderView.Fixed)
 
 def receiving_data_table_widget_delete():
     global row_data_2
@@ -485,41 +425,65 @@ def delete_table_widget_delete():
 table_widget_delete.cellClicked.connect(receiving_data_table_widget_delete)
 
 button_delete1 = PushButton(parent=delete_page, text='Удалить')
-button_delete1.setGeometry(10, 10, 150, 50)
+button_delete1.setFixedSize(150, 50)
 button_delete1.clicked.connect(delete_choose_table_widget_delete)
 
 button_delete2 = PushButton(parent=delete_page, text='Удалить всё')
-button_delete2.setGeometry(170, 10, 150, 50)
+button_delete2.setFixedSize(150, 50)
 button_delete2.clicked.connect(delete_table_widget_delete)
+
+delete_page_layout = QVBoxLayout(delete_page)
+button_delete_layout_widget = QWidget()
+button_delete_layout = QHBoxLayout(button_delete_layout_widget)
+
+button_delete_layout.addWidget(button_delete1, alignment=Qt.AlignmentFlag.AlignHCenter)
+button_delete_layout.addWidget(button_delete2, alignment=Qt.AlignmentFlag.AlignHCenter)
+delete_page_layout.addWidget(button_delete_layout_widget)
+delete_page_layout.addWidget(table_widget_delete, stretch=1)
+
+delete_page_layout.setContentsMargins(50, 10, 50, 0)
+delete_page_layout.setSpacing(20)
+delete_page_layout.addStretch(1)
 
 
 button_ADD = PushButton(parent=home_page, text='Добавить')
-button_ADD.setGeometry(10, 10, 150, 50)
+button_ADD.setFixedSize(150, 50)
 button_ADD.clicked.connect(lambda: window.switchTo(add_page)) 
 
 button_EDIT = PushButton(parent=home_page, text='Редактировать')
-button_EDIT.setGeometry(170, 10, 150, 50)
+button_EDIT.setFixedSize(150, 50)
 button_EDIT.clicked.connect(lambda: window.switchTo(change_page)) 
 
 button_DELETE = PushButton(parent=home_page, text='Удалить')
-button_DELETE.setGeometry(330, 10, 150, 50)
+button_DELETE.setFixedSize(150, 50)
 button_DELETE.clicked.connect(lambda: window.switchTo(delete_page)) 
 
 button_SETTING = PushButton(parent=home_page, text='Поиск')
-button_SETTING.setGeometry(490, 10, 150, 50)
+button_SETTING.setFixedSize(150, 50)
 button_SETTING.clicked.connect(lambda: window.switchTo(search_page)) 
 
 
 table_widget = TableWidget(home_page)
-table_widget.setGeometry(10, 70, 620, 460)
 table_widget.setColumnCount(4)
 table_widget.setHorizontalHeaderLabels(["Наименование", "Дата", "Тип", "Создано"])
-table_widget.setColumnWidth(0, 230)  
-table_widget.setColumnWidth(1, 100) 
-table_widget.setColumnWidth(2, 150)
-table_widget.setColumnWidth(3, 110)
-table_widget.setEditTriggers(QTableWidget.NoEditTriggers)
-table_widget.horizontalHeader().setSectionResizeMode(QHeaderView.Fixed)
+table_widget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+table_widget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+
+
+home_page_layout = QVBoxLayout(home_page)
+buttons_layout_widget = QWidget()
+buttons_layout = QHBoxLayout(buttons_layout_widget)
+
+buttons_layout.addWidget(button_ADD, alignment=Qt.AlignmentFlag.AlignHCenter)
+buttons_layout.addWidget(button_EDIT, alignment=Qt.AlignmentFlag.AlignHCenter)
+buttons_layout.addWidget(button_DELETE, alignment=Qt.AlignmentFlag.AlignHCenter)
+buttons_layout.addWidget(button_SETTING, alignment=Qt.AlignmentFlag.AlignHCenter)
+home_page_layout.addWidget(buttons_layout_widget)
+home_page_layout.addWidget(table_widget, stretch=1)
+
+home_page_layout.setContentsMargins(50, 10, 50, 0)
+home_page_layout.setSpacing(20)
+home_page_layout.addStretch(1)
 
 update_everything()
 
