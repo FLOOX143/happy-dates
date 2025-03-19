@@ -485,7 +485,28 @@ home_page_layout.setContentsMargins(50, 10, 50, 0)
 home_page_layout.setSpacing(20)
 home_page_layout.addStretch(1)
 
+
+def notification():
+    day = str(datetime.now().day)
+    month = str(datetime.now().month)
+
+    if int(month) < 10:
+        month = '0' + month
+    if int(day) < 10:
+        day = '0' + day
+    today = day + "." + month
+    data_base = Selection()
+    for str_id, name, date, type, created in data_base:
+        if today == date:
+            try:
+                ToastNotifier().show_toast("Сегодня праздник!", f'Праздник: {name}', threaded=True,
+                    icon_path=None, duration=0)
+            except TypeError:
+                pass
+
+
 update_everything()
+notification()
 
 window.show()
 app.exec()
