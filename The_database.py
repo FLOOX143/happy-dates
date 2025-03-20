@@ -39,27 +39,3 @@ def update():
     data.commit()
 
 print(Selection())
-
-
-
-# def compare(date, name): # контроль ввода пользователя 
-#     c.execute('SELECT name FROM holiday WHERE name=?', (name,))
-#     res = c.fetchall()
-#     for i in range(len(name)): # проверка на пустое название name
-#         if name[i] == name[i - 1] and name[i] == ' ':
-#             name_check = None
-#         else:
-#             name_check = True
-#     for i in range(len(date)): # проверка на пустое название date
-#         if date[i] == date[i - 1] and date[i] == ' ':
-#             date_check = None
-#         else:
-#             date_check = True
-#     if name == '' or date == '': # проверка на ввод без символов
-#         return None
-#     elif name_check == None or date_check == None:
-#         return None
-#     elif res == []: # проверка на существоваение в базе такого же объекта
-#         return True
-#     else:
-#         return False
