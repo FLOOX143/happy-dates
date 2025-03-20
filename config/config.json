@@ -1,0 +1,9 @@
+{
+    "MainWindow": {
+        "EnableAcrylicBackground": false
+    },
+    "QFluentWidgets": {
+        "ThemeColor": "#ff1dfff7",
+        "ThemeMode": "Auto"
+    }
+}

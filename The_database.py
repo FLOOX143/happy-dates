@@ -1,38 +1,41 @@
 import sqlite3
-import sys
 
-data = sqlite3.connect('database.db')
-c = data.cursor()
-c.execute("""CREATE TABLE IF NOT EXISTS holiday (
+data = sqlite3.connect('database_new.db') # создание базы
+cur = data.cursor()
+cur.execute("""CREATE TABLE IF NOT EXISTS holiday_calendars (
+id INTEGER PRIMARY KEY,
+name text NOT NULL,
 date text NOT NULL, 
-name text NOT NULL
+type text NOT NULL,
+created text NOT NULL
 )""")
 
-def add(Date, Name):
-    c.execute('INSERT INTO holiday(date, name) VALUES(?, ?)', (Date, Name))
+def add(Name, Date, Type, Created): # добавление в базу
+    cur.execute('INSERT INTO holiday_calendars(name, date, type, created) VALUES(?, ?, ?, ?)', (Name, Date, Type, Created))
     data.commit()
     return
 
-def Selection():
-    c.execute("SELECT * FROM holiday")
-    cod = c.fetchall()
+def Selection():# выделение всех значений из поля вывода в окне программы
+    cur.execute("SELECT * FROM holiday_calendars")
+    cod = cur.fetchall()
     return cod
 
-def delete():
-    c.execute("DELETE FROM holiday")
+
+def delete(): # удаление всех значений
+    cur.execute("DELETE FROM holiday_calendars")
     data.commit()
 
-def compare(date, name):
-    c.execute('SELECT name FROM holiday WHERE name=?', (name,))
-    res = c.fetchall()
-    if name == '' or date == '':
-        return None
-    elif res == []:
-        return True
-    else:
-        return False
-    
-def delete_selected(select):
-    date, name = select
-    c.execute('DELETE FROM holiday WHERE date=? AND name=?', (date, name))
+def delete_selected(Name, Date, Type, Created): # удалить конкретный(выделенный) объект
+    cur.execute('DELETE FROM holiday_calendars WHERE name = ?  AND date = ? AND type = ? AND created = ?', (Name, Date, Type, Created))
     data.commit()
+    
+def update():
+    cur.execute('SELECT id FROM holiday_calendars ORDER BY id')
+    rows = cur.fetchall()
+
+    for index, row in enumerate(rows, start=1):
+        cur.execute('UPDATE holiday_calendars SET id = ? WHERE id = ?', (index, row[0]))
+    
+    data.commit()
+
+print(Selection())
